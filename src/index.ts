@@ -170,7 +170,12 @@ function FlatpickrInstance(
     e?: MouseEvent | IncrementEvent | KeyboardEvent | FocusEvent
   ) {
     if (self.selectedDates.length === 0) {
-      setDefaultTime();
+      // If the event is undefined that means that the call
+      // comes from documentClick(). In that case we want force
+      // to be false so that autoFillDefautTime config works
+      // properly
+      const mustForce = e !== undefined && e.constructor.name !== "FocusEvent";
+      setDefaultTime(mustForce);
     }
 
     if (e !== undefined && e.type !== "blur") {
@@ -479,9 +484,8 @@ function FlatpickrInstance(
         );
       }
     }
-    
-    if (self.config.allowInput)
-      bind(self._input, "blur", onBlur);
+
+    if (self.config.allowInput) bind(self._input, "blur", onBlur);
   }
 
   /**
@@ -1476,7 +1480,11 @@ function FlatpickrInstance(
 
         self.close();
 
-        if (self.config && self.config.mode === "range" && self.selectedDates.length === 1) {
+        if (
+          self.config &&
+          self.config.mode === "range" &&
+          self.selectedDates.length === 1
+        ) {
           self.clear(false);
           self.redraw();
         }
@@ -1594,14 +1602,18 @@ function FlatpickrInstance(
       );
     return false;
   }
-    
+
   function onBlur(e: FocusEvent) {
     var isInput = e.target === self._input;
-    
+
     if (isInput) {
-      self.setDate(self._input.value, true, e.target === self.altInput
-                   ? self.config.altFormat
-                   : self.config.dateFormat);
+      self.setDate(
+        self._input.value,
+        true,
+        e.target === self.altInput
+          ? self.config.altFormat
+          : self.config.dateFormat
+      );
     }
   }
 
@@ -1651,7 +1663,7 @@ function FlatpickrInstance(
         case 13:
           if (isTimeObj) {
             e.preventDefault();
-            updateTime();
+            updateTime(e);
             focusAndClose();
           } else selectDate(e);
 
@@ -1865,8 +1877,15 @@ function FlatpickrInstance(
       positionCalendar();
   }
 
-  function setDefaultTime() {
-    if (!self.config.autoFillDefaultTime) {
+  /**
+   * Sets the default time into the input. The defaults are taken
+   * from the configs defaultHour and defaultMinute.
+   *
+   * @param {Boolean} force if true, it will bypass the autoFillDefaultTime
+   *                        config and will set the default time anyway
+   */
+  function setDefaultTime(force: Boolean = false) {
+    if (!force && !self.config.autoFillDefaultTime) {
       return;
     }
 
