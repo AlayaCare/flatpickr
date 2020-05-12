@@ -1,6 +1,8 @@
 ## AlayaCare's Flatpickr fork
-We needed a fix that we made into the library for the release of AcDateTimeField so we forked Flatpickr for the ADS release.
-As soon as Flatpickr will do a release, we can get rid of this.
+We decided to fork Flatpickr because there is a behaviour in version 4 that does not fit our needs.
+At first, we did a fix directly in the library, but realized that is was not compatible with their code base so we reverted it.
+For the moment, we will continue using this fork and see in the future what we do with that.
+https://github.com/flatpickr/flatpickr/pull/2173
 
 ## flatpickr - javascript datetime picker
 [![Build Status](https://circleci.com/gh/flatpickr/flatpickr/tree/master.svg?style=shield)](https://circleci.com/gh/flatpickr/flatpickr/tree/master)
