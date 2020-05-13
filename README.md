@@ -1,8 +1,11 @@
 ## AlayaCare's Flatpickr fork
 We decided to fork Flatpickr because there is a behaviour in version 4 that does not fit our needs.
+
 At first, we did a fix directly in the library, but realized that is was not compatible with their code base so we reverted it.
 For the moment, we will continue using this fork and see in the future what we do with that.
 https://github.com/flatpickr/flatpickr/pull/2173
+
+NOTE: The release is tagged to `4.6.4`. This tag is branched out from `4.6.3` and I added my first. There is a bug somewhere from tag `4.6.3` and master as of 2020-05-13 that causes issue with the date-time calendar and the now button we implemented.
 
 ## flatpickr - javascript datetime picker
 [![Build Status](https://circleci.com/gh/flatpickr/flatpickr/tree/master.svg?style=shield)](https://circleci.com/gh/flatpickr/flatpickr/tree/master)
