@@ -202,6 +202,9 @@ function FlatpickrInstance(
 
     setHoursFromInputs();
 
+    // Id the input is empty and the time picker is set to the default time, that means
+    // the user only opened the picker and did no action so we return here and leave the
+    // input empty.
     if (!self.input.value && isSameTimeAsDefault()) {
       return;
     }
