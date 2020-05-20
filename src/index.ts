@@ -34,6 +34,7 @@ import {
 import { tokenRegex, monthToStr } from "./utils/formatting";
 
 import "./utils/polyfills";
+import { ensureFile } from "fs-extra";
 
 const DEBOUNCED_CHANGE_MS = 300;
 
@@ -163,6 +164,15 @@ function FlatpickrInstance(
     }
   }
 
+  function isSameTimeAsDefault() {
+    return (
+      self.hourElement &&
+      self.minuteElement &&
+      +self.hourElement.value === self.config.defaultHour &&
+      +self.minuteElement.value === self.config.defaultMinute
+    );
+  }
+
   /**
    * The handler for all events targeting the time inputs
    */
@@ -192,6 +202,21 @@ function FlatpickrInstance(
     const prevValue = self._input.value;
 
     setHoursFromInputs();
+
+    if (!self.input.value && isSameTimeAsDefault()) {
+      return;
+    }
+
+    // TODO
+    if (
+      self.hourElement &&
+      self.minuteElement &&
+      self.config.noCalendar &&
+      self.config.enableTime
+    ) {
+      self.setDate(`${self.hourElement.value}:${self.minuteElement.value}`);
+    }
+
     updateValue();
 
     if (self._input.value !== prevValue) {
@@ -2814,20 +2839,7 @@ function FlatpickrInstance(
           : "";
     }
 
-    // date-time input type time
-    if (
-      self.config.noCalendar &&
-      self.config.enableTime &&
-      self.hourElement &&
-      self.minuteElement &&
-      triggerChange // this means we don't come from init()
-    ) {
-      self.input.value = `${self.hourElement.value}:${
-        self.minuteElement.value
-      }`;
-    } else {
-      self.input.value = getDateStr(self.config.dateFormat);
-    }
+    self.input.value = getDateStr(self.config.dateFormat);
 
     if (self.altInput !== undefined) {
       self.altInput.value = getDateStr(self.config.altFormat);
