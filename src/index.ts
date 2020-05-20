@@ -34,7 +34,6 @@ import {
 import { tokenRegex, monthToStr } from "./utils/formatting";
 
 import "./utils/polyfills";
-import { ensureFile } from "fs-extra";
 
 const DEBOUNCED_CHANGE_MS = 300;
 
@@ -207,7 +206,7 @@ function FlatpickrInstance(
       return;
     }
 
-    // TODO
+    // For time picker only, sets the selected date using the one in the time picker
     if (
       self.hourElement &&
       self.minuteElement &&
