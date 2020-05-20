@@ -174,11 +174,18 @@ function FlatpickrInstance(
       // comes from documentClick(). In that case we want force
       // to be false so that autoFillDefautTime config works
       // properly
-      const mustForce = e !== undefined && e.constructor.name !== "FocusEvent";
+      const mustForce =
+        e !== undefined &&
+        (e.constructor.name === "MouseEvent" ||
+          e.constructor.name === "IncrementEvent");
       setDefaultTime(mustForce);
     }
 
-    if (e !== undefined && e.type !== "blur") {
+    if (
+      e !== undefined &&
+      e.constructor.name !== "KeyboardEvent" &&
+      e.type !== "blur"
+    ) {
       timeWrapper(e);
     }
 
@@ -1187,10 +1194,9 @@ function FlatpickrInstance(
           : self.config.defaultSeconds
       );
 
-      self.secondElement.setAttribute(
-        "step",
-        self.minuteElement.getAttribute("step") as string
-      );
+      self.secondElement.setAttribute("step", self.minuteElement.getAttribute(
+        "step"
+      ) as string);
       self.secondElement.setAttribute("min", "0");
       self.secondElement.setAttribute("max", "59");
 
@@ -1884,7 +1890,7 @@ function FlatpickrInstance(
    * @param {Boolean} force if true, it will bypass the autoFillDefaultTime
    *                        config and will set the default time anyway
    */
-  function setDefaultTime(force: Boolean = false) {
+  function setDefaultTime(force: boolean = false) {
     if (!force && !self.config.autoFillDefaultTime) {
       return;
     }
@@ -2113,9 +2119,9 @@ function FlatpickrInstance(
       const pluginConf = self.config.plugins[i](self) || ({} as Options);
       for (const key in pluginConf) {
         if (HOOKS.indexOf(key as HookKey) > -1) {
-          (self.config as any)[key] = arrayify(
-            pluginConf[key as HookKey] as Hook
-          )
+          (self.config as any)[key] = arrayify(pluginConf[
+            key as HookKey
+          ] as Hook)
             .map(bindToInstance)
             .concat(self.config[key as HookKey]);
         } else if (typeof userConfig[key as keyof Options] === "undefined")
@@ -2808,7 +2814,20 @@ function FlatpickrInstance(
           : "";
     }
 
-    self.input.value = getDateStr(self.config.dateFormat);
+    // date-time input type time
+    if (
+      self.config.noCalendar &&
+      self.config.enableTime &&
+      self.hourElement &&
+      self.minuteElement &&
+      triggerChange // this means we don't come from init()
+    ) {
+      self.input.value = `${self.hourElement.value}:${
+        self.minuteElement.value
+      }`;
+    } else {
+      self.input.value = getDateStr(self.config.dateFormat);
+    }
 
     if (self.altInput !== undefined) {
       self.altInput.value = getDateStr(self.config.altFormat);
