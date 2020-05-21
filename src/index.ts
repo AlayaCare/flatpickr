@@ -195,8 +195,9 @@ function FlatpickrInstance(
       // properly
       const mustForce =
         e !== undefined &&
-        (e.constructor.name === "MouseEvent" ||
-          e.constructor.name === "IncrementEvent");
+        // IncrementEvent is not an interface like other Events and I don't
+        // want to change that, so for IncrementEvent, we check the type.
+        (e.constructor.name === "MouseEvent" || e.type === "increment");
       setDefaultTime(mustForce);
     }
 
