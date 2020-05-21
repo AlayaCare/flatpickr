@@ -216,7 +216,12 @@ function FlatpickrInstance(
       self.config.noCalendar &&
       self.config.enableTime
     ) {
-      self.setDate(`${self.hourElement.value}:${self.minuteElement.value}`);
+      const hours =
+        self.amPM !== undefined
+          ? ampm2military(+self.hourElement.value, self.amPM
+              .textContent as string)
+          : self.hourElement.value;
+      self.setDate(`${hours}:${self.minuteElement.value}`);
     }
 
     updateValue();
