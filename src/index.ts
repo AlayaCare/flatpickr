@@ -163,11 +163,21 @@ function FlatpickrInstance(
     }
   }
 
+  function getHourElementValueAsMilitary24() {
+    const hourElementNumberValue = self.hourElement
+      ? +self.hourElement.value
+      : null;
+
+    return self.amPM !== undefined && hourElementNumberValue
+      ? ampm2military(hourElementNumberValue, self.amPM.textContent as string)
+      : hourElementNumberValue;
+  }
+
   function isSameTimeAsDefault() {
     return (
       self.hourElement &&
       self.minuteElement &&
-      +self.hourElement.value === self.config.defaultHour &&
+      getHourElementValueAsMilitary24() === self.config.defaultHour &&
       +self.minuteElement.value === self.config.defaultMinute
     );
   }
@@ -216,12 +226,9 @@ function FlatpickrInstance(
       self.config.noCalendar &&
       self.config.enableTime
     ) {
-      const hours =
-        self.amPM !== undefined
-          ? ampm2military(+self.hourElement.value, self.amPM
-              .textContent as string)
-          : self.hourElement.value;
-      self.setDate(`${hours}:${self.minuteElement.value}`);
+      self.setDate(
+        `${getHourElementValueAsMilitary24()}:${self.minuteElement.value}`
+      );
     }
 
     updateValue();
