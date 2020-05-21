@@ -163,20 +163,20 @@ function FlatpickrInstance(
     }
   }
 
-  function getHourElementValueAsMilitary24() {
+  function getHourElementValueAsMilitary24(): number {
     const hourElementNumberValue = self.hourElement
       ? +self.hourElement.value
-      : null;
+      : self.config.defaultHour;
 
     return self.amPM !== undefined && hourElementNumberValue
       ? ampm2military(hourElementNumberValue, self.amPM.textContent as string)
       : hourElementNumberValue;
   }
 
-  function isSameTimeAsDefault() {
+  function isSameTimeAsDefault(): boolean {
     return (
-      self.hourElement &&
-      self.minuteElement &&
+      self.hourElement !== undefined &&
+      self.minuteElement !== undefined &&
       getHourElementValueAsMilitary24() === self.config.defaultHour &&
       +self.minuteElement.value === self.config.defaultMinute
     );
@@ -220,16 +220,24 @@ function FlatpickrInstance(
       return;
     }
 
-    // For time picker only, sets the selected date using the one in the time picker
-    if (
-      self.hourElement &&
-      self.minuteElement &&
-      self.config.noCalendar &&
-      self.config.enableTime
-    ) {
-      self.setDate(
-        `${getHourElementValueAsMilitary24()}:${self.minuteElement.value}`
-      );
+    if (self.hourElement && self.minuteElement) {
+      // time
+      if (self.config.noCalendar && self.config.enableTime) {
+        self.setDate(
+          `${getHourElementValueAsMilitary24()}:${self.minuteElement.value}`
+        );
+      }
+
+      // date-time
+      if (!self.config.noCalendar && self.config.enableTime) {
+        const newDate = self.parseDate(prevValue) || new Date();
+        newDate.setHours(
+          getHourElementValueAsMilitary24(),
+          +self.minuteElement.value
+        );
+
+        self.setDate(newDate);
+      }
     }
 
     updateValue();
@@ -1370,7 +1378,9 @@ function FlatpickrInstance(
       self.currentYear = self._initialDate.getFullYear();
       self.currentMonth = self._initialDate.getMonth();
     }
-    self.showTimeInput = false;
+
+    // For date-time input, we don't want to hide the time picker
+    self.showTimeInput = self.config.enableTime && !self.config.noCalendar;
 
     if (self.config.enableTime === true) {
       setDefaultHours();
@@ -1651,7 +1661,6 @@ function FlatpickrInstance(
 
   function onBlur(e: FocusEvent) {
     var isInput = e.target === self._input;
-
     if (isInput) {
       self.setDate(
         self._input.value,
