@@ -163,6 +163,22 @@ function FlatpickrInstance(
     }
   }
 
+  function isTimeInput(): boolean {
+    return self.config.noCalendar && self.config.enableTime;
+  }
+
+  function isDateTimeInput(): boolean {
+    return !self.config.noCalendar && self.config.enableTime;
+  }
+
+  function getMinForType(): Date | undefined {
+    return isTimeInput() ? self.config.minTime : self.config.minDate;
+  }
+
+  function getMaxForType(): Date | undefined {
+    return isTimeInput() ? self.config.maxTime : self.config.maxDate;
+  }
+
   function getHourElementValueAsMilitary24(): number {
     const hourElementNumberValue = self.hourElement
       ? +self.hourElement.value
@@ -173,12 +189,21 @@ function FlatpickrInstance(
       : hourElementNumberValue;
   }
 
-  function isSameTimeAsDefault(): boolean {
+  function isSameTimeAsDefaultOrMinMax(): boolean {
+    const min = getMinForType();
+    const max = getMaxForType();
+    const hourElementNumber: number = getHourElementValueAsMilitary24();
+    const minuteElementNumber: number =
+      (self.minuteElement && +self.minuteElement.value) || 0;
+
     return (
-      self.hourElement !== undefined &&
       self.minuteElement !== undefined &&
-      getHourElementValueAsMilitary24() === self.config.defaultHour &&
-      +self.minuteElement.value === self.config.defaultMinute
+      (hourElementNumber === self.config.defaultHour ||
+        hourElementNumber === min?.getHours() ||
+        hourElementNumber === max?.getHours()) &&
+      (minuteElementNumber === self.config.defaultMinute ||
+        minuteElementNumber === min?.getMinutes() ||
+        minuteElementNumber === max?.getMinutes())
     );
   }
 
@@ -211,25 +236,25 @@ function FlatpickrInstance(
 
     const prevValue = self._input.value;
 
+    setHoursFromInputs();
+
     // If the input is empty and the time picker is set to the default time, that means
     // the user only opened the picker and did no action so we return here and leave the
     // input empty.
-    if (!self.input.value && isSameTimeAsDefault()) {
+    if (!self.input.value && isSameTimeAsDefaultOrMinMax()) {
       return;
     }
 
-    setHoursFromInputs();
-
     if (self.hourElement && self.minuteElement) {
       // time
-      if (self.config.noCalendar && self.config.enableTime) {
+      if (isTimeInput()) {
         self.setDate(
           `${getHourElementValueAsMilitary24()}:${self.minuteElement.value}`
         );
       }
 
       // date-time
-      if (!self.config.noCalendar && self.config.enableTime) {
+      if (isDateTimeInput()) {
         const newDate = self.parseDate(prevValue) || new Date();
         newDate.setHours(
           getHourElementValueAsMilitary24(),
@@ -338,24 +363,24 @@ function FlatpickrInstance(
     let hours = self.config.defaultHour;
     let minutes = self.config.defaultMinute;
     let seconds = self.config.defaultSeconds;
+    const min = getMinForType();
+    const max = getMaxForType();
 
-    if (self.config.minDate !== undefined) {
-      const minHr = self.config.minDate.getHours();
-      const minMinutes = self.config.minDate.getMinutes();
+    if (min !== undefined) {
+      const minHr = min.getHours();
+      const minMinutes = min.getMinutes();
       hours = Math.max(hours, minHr);
       if (hours === minHr) minutes = Math.max(minMinutes, minutes);
-      if (hours === minHr && minutes === minMinutes)
-        seconds = self.config.minDate.getSeconds();
+      if (hours === minHr && minutes === minMinutes) seconds = min.getSeconds();
     }
 
-    if (self.config.maxDate !== undefined) {
-      const maxHr = self.config.maxDate.getHours();
-      const maxMinutes = self.config.maxDate.getMinutes();
+    if (max !== undefined) {
+      const maxHr = max.getHours();
+      const maxMinutes = max.getMinutes();
       hours = Math.min(hours, maxHr);
 
       if (hours === maxHr) minutes = Math.min(maxMinutes, minutes);
-      if (hours === maxHr && minutes === maxMinutes)
-        seconds = self.config.maxDate.getSeconds();
+      if (hours === maxHr && minutes === maxMinutes) seconds = max.getSeconds();
     }
 
     setHours(hours, minutes, seconds);
@@ -1242,9 +1267,10 @@ function FlatpickrInstance(
           : self.config.defaultSeconds
       );
 
-      self.secondElement.setAttribute("step", self.minuteElement.getAttribute(
-        "step"
-      ) as string);
+      self.secondElement.setAttribute(
+        "step",
+        self.minuteElement.getAttribute("step") as string
+      );
       self.secondElement.setAttribute("min", "0");
       self.secondElement.setAttribute("max", "59");
 
@@ -1271,6 +1297,11 @@ function FlatpickrInstance(
       self.amPM.tabIndex = -1;
       self.timeContainer.appendChild(self.amPM);
     }
+
+    // Set default time in picker.
+    // If min > defaultTIme we display min instead of default time.
+    // If max < defaultTIme we display max instead of default time.
+    setDefaultHours();
 
     return self.timeContainer;
   }
@@ -2168,9 +2199,9 @@ function FlatpickrInstance(
       const pluginConf = self.config.plugins[i](self) || ({} as Options);
       for (const key in pluginConf) {
         if (HOOKS.indexOf(key as HookKey) > -1) {
-          (self.config as any)[key] = arrayify(pluginConf[
-            key as HookKey
-          ] as Hook)
+          (self.config as any)[key] = arrayify(
+            pluginConf[key as HookKey] as Hook
+          )
             .map(bindToInstance)
             .concat(self.config[key as HookKey]);
         } else if (typeof userConfig[key as keyof Options] === "undefined")
