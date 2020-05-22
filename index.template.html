@@ -51,7 +51,17 @@
 
   <script>
     var fp = flatpickr(".date", {
-
+      allowInput: true,
+      noCalendar: true,
+      enableTime: true,
+      autoFillDefaultTime: false,
+      dateFormat: 'G:i K',
+      defaultHour: 0,
+      onOpen() {
+          this.showTimeInput = true;
+      },
+      time_24hr: true,
+      // minTime: '15:00',
     })
   </script>
 </body>
