@@ -27,15 +27,13 @@
     <div>
       <label>
         <div>Date 1</div>
-        <input placeholder="Select Date..." class=date />
+        <input placeholder="Select Date..." class=time />
       </label>
-
-      <!--
+      <br><br>
       <label>
         <div>Date 2</div>
-        <input placeholder="Select Date..." class=date id=input2 />
+        <input placeholder="Select Date..." class=date-time />
       </label>
-      -->
     </div>
   </div>
   
@@ -50,8 +48,32 @@
   <script src="./dist/plugins/weekSelect/weekSelect.js"></script>
 
   <script>
-    var fp = flatpickr(".date", {
+    var fp = flatpickr(".time", {
+      allowInput: true,
+      noCalendar: true,
+      enableTime: true,
+      autoFillDefaultTime: false,
+      dateFormat: 'G:i K',
+      defaultHour: 0,
+      onOpen() {
+          this.showTimeInput = true;
+      },
+      time_24hr: false,
+      // minTime: '13:37',
+    })
 
+    var fp = flatpickr(".date-time", {
+      allowInput: true,
+      noCalendar: false,
+      enableTime: true,
+      autoFillDefaultTime: false,
+      dateFormat: 'Y-m-d G:i K',
+      defaultHour: 0,
+      onOpen() {
+          this.showTimeInput = true;
+      },
+      time_24hr: false,
+      // minDate: '2020-04-20 13:37'
     })
   </script>
 </body>
