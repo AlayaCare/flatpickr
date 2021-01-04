@@ -211,25 +211,6 @@ function FlatpickrInstance(
     e?: MouseEvent | IncrementEvent | KeyboardEvent | FocusEvent
   ) {
     if (self.selectedDates.length === 0) {
-// <<<<<<< HEAD
-//       // If the event is undefined that means that the call
-//       // comes from documentClick(). In that case we want force
-//       // to be false so that autoFillDefautTime config works
-//       // properly
-//       const mustForce =
-//         e !== undefined &&
-//         // IncrementEvent is not an interface like other Events and I don't
-//         // want to change that, so for IncrementEvent, we check the type.
-//         (e.constructor.name === "MouseEvent" || e.type === "increment");
-//       setDefaultTime(mustForce);
-//     }
-
-//     if (
-//       e !== undefined &&
-//       e.constructor.name !== "KeyboardEvent" &&
-//       e.type !== "blur"
-//     ) {
-// =======
       const defaultDate =
         self.config.minDate === undefined ||
         compareDates(new Date(), self.config.minDate) >= 0
@@ -1971,31 +1952,6 @@ function FlatpickrInstance(
       positionCalendar();
   }
 
-// <<<<<<< HEAD
-//   /**
-//    * Sets the default time into the input. The defaults are taken
-//    * from the configs defaultHour and defaultMinute.
-//    *
-//    * @param {Boolean} force if true, it will bypass the autoFillDefaultTime
-//    *                        config and will set the default time anyway
-//    */
-//   function setDefaultTime(force: boolean = false) {
-//     if (!force && !self.config.autoFillDefaultTime) {
-//       return;
-//     }
-
-//     self.setDate(
-//       self.config.minDate !== undefined
-//         ? new Date(self.config.minDate.getTime())
-//         : new Date(),
-//       true
-//     );
-//     setDefaultHours();
-//     updateValue();
-//   }
-
-// =======
-// >>>>>>> upstream/master
   function open(
     e?: FocusEvent | MouseEvent,
     positionElement = self._positionElement
