@@ -598,13 +598,14 @@ function FlatpickrInstance(
       self.config.errorHandler(e);
     }
 
-    if (triggerChange && self.currentYear !== oldYear) {
+    if (triggerChange && !isTimeInput() && self.currentYear !== oldYear) {
       triggerEvent("onYearChange");
       buildMonthSwitch();
     }
 
     if (
       triggerChange &&
+      !isTimeInput() &&
       (self.currentYear !== oldYear || self.currentMonth !== oldMonth)
     ) {
       triggerEvent("onMonthChange");
