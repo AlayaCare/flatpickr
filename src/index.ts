@@ -1694,10 +1694,6 @@ function FlatpickrInstance(
   }
 
   function onBlur(e: FocusEvent) {
-<<<<<<< HEAD
-    var isInput = e.target === self._input;
-    if (isInput) {
-=======
     const isInput = e.target === self._input;
 
     if (
@@ -1705,7 +1701,6 @@ function FlatpickrInstance(
       (self.selectedDates.length > 0 || self._input.value.length > 0) &&
       !(e.relatedTarget && isCalendarElem(e.relatedTarget as HTMLElement))
     ) {
->>>>>>> upstream/master
       self.setDate(
         self._input.value,
         true,
