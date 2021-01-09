@@ -9,7 +9,7 @@ export interface Config {
 function momentPlugin(config: Config): Plugin {
   const moment = config.moment;
 
-  return function(fp) {
+  return function (fp) {
     function captureIncrement(e: Event) {
       const event = e as IncrementEvent;
       event.stopPropagation();
@@ -17,8 +17,8 @@ function momentPlugin(config: Config): Plugin {
 
       const input = getEventTarget(event) as HTMLInputElement;
       const unit = Array.from(input.classList)
-        .filter(name => name.startsWith("flatpickr-"))
-        .map(name => name.substring(10))[0];
+        .filter((name) => name.startsWith("flatpickr-"))
+        .map((name) => name.substring(10))[0];
       const step = parseFloat(input.getAttribute("step") as string);
 
       date.add(step * event.delta, unit);
@@ -39,7 +39,7 @@ function momentPlugin(config: Config): Plugin {
       },
       onReady() {
         [fp.hourElement, fp.minuteElement, fp.secondElement].forEach(
-          element =>
+          (element) =>
             element &&
             element.addEventListener("increment", captureIncrement, {
               capture: true,
@@ -48,7 +48,7 @@ function momentPlugin(config: Config): Plugin {
       },
       onDestroy() {
         [fp.hourElement, fp.minuteElement, fp.secondElement].forEach(
-          element =>
+          (element) =>
             element &&
             element.removeEventListener("increment", captureIncrement, {
               capture: true,

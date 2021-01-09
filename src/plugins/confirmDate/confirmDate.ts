@@ -22,7 +22,7 @@ function confirmDatePlugin(pluginConfig: Config): Plugin {
   let confirmContainer: HTMLDivElement;
   const confirmButtonCSSClass = "flatpickr-confirm";
 
-  return function(fp: Instance) {
+  return function (fp: Instance) {
     if (fp.config.noCalendar || fp.isMobile) return {};
     return {
       onKeyDown(_: Date[], __: string, ___: Instance, e: KeyboardEvent) {
@@ -57,7 +57,7 @@ function confirmDatePlugin(pluginConfig: Config): Plugin {
       },
       ...(!config.showAlways
         ? {
-            onChange: function(_: Date[], dateStr: string) {
+            onChange: function (_: Date[], dateStr: string) {
               const showCondition =
                 fp.config.enableTime ||
                 fp.config.mode === "multiple" ||
