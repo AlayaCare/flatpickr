@@ -1,3 +1,7 @@
+# NOTE
+
+This repo has been archived, it is not used anymore.
+
 ## AlayaCare's Flatpickr fork
 We decided to fork Flatpickr because there is a behaviour in version 4 that does not fit our needs.
 
